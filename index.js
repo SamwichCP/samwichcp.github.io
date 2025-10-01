@@ -3,70 +3,16 @@ const button = document.querySelector("button");
 const canvas = document.querySelector("canvas");
 const context = canvas.getContext("2d");
 
-const names = ["Spongebob", "Patrick", "Squidward", "Sandy"];
-const jsonString = JSON.stringify(names);
-const parsedData = JSON.parse(jsonString);
-fetch("people.json")
-    .then(response => response.json())
-    .then(values => values.array.forEach(value => console.log(value.name)))
-    .catch(error => console.error(error));
+//Have a svg path2d that checks, if you're on this side of the world sprite render the sprite on top otherwise the penguin renders on top
+//This.images[]
+//This.path2d[]
+
+//Have the RoomData inside a js cause it doesn't need to change during game but player data like cloths bought/wearing, coins will be a json, also igloo data will be in a diffrent json.
+//I'll have a player template json then populated it as they play, it'll be save every so often as cookies and they can down load/upload they're files cause it won't persist except cookies.
 
 var mouse = {x: 0, y: 0}
 var mouseClick = {x: 0, y: 0}
 var currentRoom = 2;
-
-fetch("names.json")
-    .then(response => response.json())
-    .then(value => dataP.innerHTML = value)
-    .catch(error => console.error(error));
-
-console.log(navigator.cookieEnabled);
-document.cookie = "firstName=HelloThere; expires=Sun, 5 October 2000 12:00:00 UTC; path=/";
-document.cookie = "lastName=SquarePants; expires=Sun, 5 October 2025 12:00:00 UTC; path=/";
-
-setCookie("email", "HelloThere@gmail.com", 265);
-console.log(document.cookie);
-function setCookie(_name, _value, _daysToLive)
-{
-    const date = new Date();
-    date.setTime(date.getTime() + _daysToLive * 24 * 60 * 60 * 1000);
-    let expires = "expires=" + date.toUTCString();
-    document.cookie = `${_name}=${_value}; ${expires}; path=/`;
-}
-function getCookie(_name)
-{
-    const cDecoded = decodeURIComponent(document.cookie);
-    const cArray = cDecoded.split("; ");
-    let result = null;
-
-    cArray.forEach(element => 
-    {
-        if(element.indexOf(_name) == 0)
-        {
-            result = element.substring(_name.length + 1);
-
-        }
-    })
-    return result;
-}
-function deleteCookie(_name)
-{
-    setCookie(_name, null, null);
-}
-
-/*August 22, 2005*/
-const image = new Image();
-image.src = "2005/Town4/Shapes/2.svg";
-image.onload
-const image2 = new Image();
-image2.src = "2005/Town4/Shapes/53.svg";
-//image2.onload
-
-/*August 22, 2005*/
-const image3 = new Image();
-image3.src = "2005/Dock10/shapes/7.svg";
-const image4 = new Image();
-image4.src = "2005/Dock10/shapes/14.svg";
 
 const dockTownPath = "M131 0 L131 137 67 137 0 0 131 0"
 const dockTown = new Path2D(dockTownPath);
@@ -106,6 +52,49 @@ async function fetchData()
     }
 }
 console.log(svgData);*/
+
+
+class Room
+{
+    constructor(_roomID)
+    {
+        this.roomID = _roomID;
+        this.roomsIndex = _roomID;
+        this.images = [];
+         this.imagesPositions = [];
+        this.imagesScales = [];
+    }
+    LoadRoom(_roomID)
+    {
+        this.roomID = _roomID;
+        for(var i = 0; i < rooms.length; i++)
+        {
+            if(rooms[i].roomID == this.roomID)
+            {
+                this.roomsIndex = i;
+            }
+        }
+
+        console.log(rooms[this.roomsIndex].images);
+        for(var i = 0; i < rooms[this.roomsIndex].images.length; i++)
+        {
+            const image = new Image();
+            image.src = rooms[this.roomsIndex].images[i].path;
+            this.images.push(image);
+            this.imagesPositions.push({x: rooms[this.roomsIndex].images[i].positionX, y: rooms[this.roomsIndex].images[i].positionY});
+            this.imagesScales.push({x: rooms[this.roomsIndex].images[i].scaleX, y: rooms[this.roomsIndex].images[i].scaleY});
+
+        }
+    }
+    DrawRoom()
+    {
+        for(var i = 0; i < this.images.length; i++)
+        {
+            //console.log(this.imagesPositions[0].x + " " + this.imagesPositions[0].y);
+            context.drawImage(this.images[i], this.imagesPositions[i].x, this.imagesPositions[i].y, this.images[i].width * this.imagesScales[i].x, this.images[i].height * this.imagesScales[i].y);
+        }
+    }
+}
 
 class Penguin
 {
@@ -149,7 +138,7 @@ class Penguin
 
         context.globalAlpha = 0.5;
         context.fillStyle = "red";
-        context.fill(nonWalkScaled);
+        //context.fill(nonWalkScaled);
         context.globalAlpha = 1;
         //check a few pixels in front of the moving penguin so it stops put the penguin pos stays inside the walkable area
         //console.log(context.isPointInPath(nonWalkScaled, this.penguinPos.x, this.penguinPos.y) + " " + _clickPos)
@@ -416,6 +405,21 @@ class Penguin
 
             }
 
+            var clickOpposite = this.penguinPos.x - _clickPos.x;
+            var clickAdjacent = this.penguinPos.y - _clickPos.y;
+            var clickHypotenuse = Math.sqrt(Math.pow(clickOpposite, 2) + Math.pow(clickAdjacent, 2))
+            var clickOppositeNormalized = clickOpposite/clickHypotenuse;
+            var clickAdjacentNormalized = clickAdjacent/clickHypotenuse;
+
+            //a^2 + b^2 = c^2
+
+            if (this.penguinPos.x >= _clickPos.x + this.speed || this.penguinPos.x <= _clickPos.x - this.speed)
+            {
+                //console.log("y: " + this.penguinPos.x + ", " + _clickPos.x + " x: " + this.penguinPos.y + ", " + _clickPos.y);
+                this.penguinPos.x -= clickOppositeNormalized * this.speed;
+                this.penguinPos.y -= clickAdjacentNormalized * this.speed;
+            }
+
             var ringXCenter = this.ring.width / 2 * haloSale;
             var ringYCenter = this.ring.height / 2 * haloSale;
             var bodyXCenter = this.body.width / 2  * bodyscale;
@@ -424,8 +428,8 @@ class Penguin
             var bellyXToRingX = ringXCenter - bellyXCenter;
             var BodyXToRingX = ringXCenter - bodyXCenter;
             var BodyYToRingY = ringYCenter - bodyYCenter;
-            this.haloPos = {x: _clickPos.x - ringXCenter, y: _clickPos.y - ringYCenter};
-            this.penguinPos = _clickPos;
+            this.haloPos = {x: this.penguinPos.x - ringXCenter, y: this.penguinPos.y - ringYCenter};
+            
 
             var BodyXOffsetToRingX = BodyXToRingX + bodyXOffset * bodyscale;
             var BodyYOffsetToRingY = BodyYToRingY + bodyYOffset * bodyscale;
@@ -440,7 +444,7 @@ class Penguin
             {
                 context.translate(canvas.width, 0);
                 context.scale(-1, 1);
-                this.haloPos = {x: (Math.abs(_clickPos.x - canvas.width)) - ringXCenter, y: _clickPos.y - ringYCenter};
+                this.haloPos = {x: (Math.abs(this.penguinPos.x - canvas.width)) - ringXCenter, y: this.penguinPos.y - ringYCenter};
 
                 context.drawImage(this.ring, this.haloPos.x, this.haloPos.y, this.ring.width * haloSale, this.ring.height * haloSale);
                 context.drawImage(this.body, this.haloPos.x + BodyXOffsetToRingX, this.haloPos.y + BodyYOffsetToRingY, this.body.width * bodyscale, this.body.height * bodyscale);
@@ -483,34 +487,24 @@ class Penguin
     }
 }
 
+var CurrentRoom = new Room(1);
 penguin = new Penguin(1);
+CurrentRoom.LoadRoom(1);
+
 
 // Animation Loop
 function animate() 
 {
+    //console.log(dataP.innerHTML);
+
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     context.imageSmoothingEnabled = false;
 
-    if (currentRoom == 1)
-    {
-        context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        context.drawImage(image2, 0, 0, canvas.width, canvas.height);
-    }
-    else if (currentRoom == 2)
-    {
-        context.drawImage(image3, 0, 0, canvas.width, canvas.height);
-        context.drawImage(image4, 100, 500, image4.width * 2, image4.height * 2);
-        
-    }
-    else if (currentRoom == 3)
-    {
-        context.drawImage(image3, 0, 0, canvas.width, canvas.height);
-        context.drawImage(image4, 100, 500, image4.width * 2, image4.height * 2);
-    }
-    else
-    {
-    }
+    //need a draw order array so I can change if something is behind or infront of the player
+
+
+    CurrentRoom.DrawRoom();
 
     if (currentRoom == 1 && penguin.GetPosition().x < 280)
     {
@@ -526,7 +520,7 @@ function animate()
 
     context.globalAlpha = 0.5;
     context.fillStyle = "blue";
-    context.fill(dockTownMatrixed);
+    //context.fill(dockTownMatrixed);
     context.globalAlpha = 1;
 
     penguin.draw({_clickPos: {x: mouseClick.x, y: mouseClick.y}, _mousePos: {x: mouse.x, y: mouse.y}});
@@ -547,5 +541,5 @@ function MouseClickPos(event)
 {
     mouseClick.x = (event.pageX - canvas.offsetLeft);
     mouseClick.y = (event.pageY - canvas.offsetTop);
-    console.log(mouseClick);
+    //console.log(mouseClick);
 }
