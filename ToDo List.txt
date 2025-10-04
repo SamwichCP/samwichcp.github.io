@@ -10,3 +10,6 @@ https://developer.mozilla.org/en-US/play?uuid=4757810d-591c-4d10-acd0-5f6fcf9f38
 -To check for collisions we have 4 lines casting out from the penguins feet and checking when all 4 lines intercet with the SVG or array lines I place that match the SVG file, when all 4 lines cross it then I know it's inside the polygon/svg shape
 -the svg path is already pixel coordinates so I just need to check if they intercet with the player/penguin 4 cardinal lines
 https://www.youtube.com/watch?v=M4OiT0Au0z4
+
+-When you click it'll mesurrer out all the penguin points along the path it'll move to every frame and the click will be the last point that'll be shorter than the movement distance per frame
+look at C:\Users\WestSadow67\Documents\SandwichCP-Project\stepDistanceMath.png for better understanding

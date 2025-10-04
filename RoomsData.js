@@ -17,6 +17,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/3.svg",
+                layerOrder: 0,
                 positionX: 757,
                 positionY: 94,
                 scaleX: 1,
@@ -25,6 +26,7 @@ const rooms =
             ,
             {
                 path: "2005/Town4/Shapes/4.svg",
+                layerOrder: 0,
                 positionX: 677,
                 positionY: 97,
                 scaleX: 1,
@@ -32,6 +34,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/5.svg",
+                layerOrder: 0,
                 positionX: 757,
                 positionY: 94,
                 scaleX: 1,
@@ -39,6 +42,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/6.svg",
+                layerOrder: 0,
                 positionX: 677,
                 positionY: 97,
                 scaleX: 1,
@@ -46,6 +50,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/7.svg",
+                layerOrder: 0,
                 positionX: 677,
                 positionY: 97,
                 scaleX: 1,
@@ -53,6 +58,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/8.svg",
+                layerOrder: 0,
                 positionX: 757,
                 positionY: 94,
                 scaleX: 1,
@@ -60,6 +66,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/10.svg",
+                layerOrder: 0,
                 positionX: 480,
                 positionY: 357,
                 scaleX: 2,
@@ -67,6 +74,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/11.svg",
+                layerOrder: 0,
                 positionX: 480,
                 positionY: 357,
                 scaleX: 2,
@@ -74,6 +82,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/12.svg",
+                layerOrder: 0,
                 positionX: 480,
                 positionY: 357,
                 scaleX: 2,
@@ -81,6 +90,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/13.svg",
+                layerOrder: 0,
                 positionX: 480,
                 positionY: 357,
                 scaleX: 2,
@@ -88,6 +98,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/15.svg",
+                layerOrder: 0,
                 positionX: 1040,
                 positionY: 340,
                 scaleX: 2,
@@ -95,6 +106,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/16.svg",
+                layerOrder: 0,
                 positionX: 1040,
                 positionY: 340,
                 scaleX: 2,
@@ -102,6 +114,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/17.svg",
+                layerOrder: 0,
                 positionX: 1040,
                 positionY: 340,
                 scaleX: 2,
@@ -109,6 +122,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/19.svg",
+                layerOrder: 0,
                 positionX: 0,
                 positionY: 0,
                 scaleX: 2,
@@ -116,6 +130,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/22.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -123,6 +138,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/23.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -130,6 +146,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/24.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -137,6 +154,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/25.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -144,6 +162,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/26.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -151,6 +170,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/27.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -158,6 +178,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/28.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -165,6 +186,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/29.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -172,6 +194,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/30.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -179,6 +202,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/31.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -186,6 +210,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/32.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -193,6 +218,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/33.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -200,6 +226,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/34.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -207,6 +234,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/35.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -214,6 +242,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/37.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -221,6 +250,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/41.svg",
+                layerOrder: 0,
                 positionX: 919,
                 positionY: 425,
                 scaleX: 2,
@@ -228,6 +258,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/44.svg",
+                layerOrder: 0,
                 positionX: 351,
                 positionY: 479,
                 scaleX: 2,
@@ -235,6 +266,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/44.svg",
+                layerOrder: 0,
                 positionX: 419,
                 positionY: 425,
                 scaleX: 2,
@@ -242,6 +274,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/47.svg",
+                layerOrder: 0,
                 positionX: 419,
                 positionY: 425,
                 scaleX: 2,
@@ -249,6 +282,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/50.svg",
+                layerOrder: 0,
                 positionX: 351,
                 positionY: 479,
                 scaleX: 2,
@@ -256,6 +290,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/53.svg",
+                layerOrder: 0,
                 positionX: 0,
                 positionY: 0,
                 scaleX: 2,
@@ -263,6 +298,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/55.svg",
+                layerOrder: 0,
                 positionX: 480,
                 positionY: 357,
                 scaleX: 2,
@@ -270,13 +306,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/57.svg",
-                positionX: 72,
-                positionY: 466,
-                scaleX: 2,
-                scaleY: 2
-            },
-            {
-                path: "2005/Town4/Shapes/57.svg",
+                layerOrder: 0,
                 positionX: 1241,
                 positionY: 498,
                 scaleX: 2,
@@ -284,6 +314,7 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/59.svg",
+                layerOrder: 0,
                 positionX: 643,
                 positionY: 289,
                 scaleX: 2,
@@ -291,11 +322,25 @@ const rooms =
             },
             {
                 path: "2005/Town4/Shapes/59.svg",
+                layerOrder: 0,
                 positionX: 1040,
                 positionY: 340,
                 scaleX: 2,
                 scaleY: 2
             }
+        ],
+        doors:
+        [
+            {
+                transformMatrix: "1.0, 0.0, 0.0, 1.0, 73.35, 92.25",
+                pathD: "M97.4 -92.25 L97.4 56.25 -20.6 80.25 -73.35 -19.3 97.4 -92.25",
+                passRoomID: 800,
+                positionX: 72,
+                positionY: 466,
+                scale: 2,
+                spawnPosX: 1245,
+                spawnPosY: 380,
+            },
         ]
     },
     {
@@ -317,7 +362,95 @@ const rooms =
     {
         roomID: 800,
         roomName: "Dock",
-        addedDate: "August 22, 2005"
+        addedDate: "August 22, 2005",
+        images:
+        [
+            {
+                path: "2005/Dock10/shapes/7.svg",
+                layerOrder: 0,
+                positionX: 0,
+                positionY: 0,
+                scaleX: 2,
+                scaleY: 2
+            },
+            {
+                path: "2005/Dock10/shapes/9.svg",
+                layerOrder: 0,
+                positionX: 0,
+                positionY: 0,
+                scaleX: 1,
+                scaleY: 1
+            },
+            {
+                path: "2005/Dock10/shapes/10.svg",
+                layerOrder: 0,
+                positionX: 0,
+                positionY: 0,
+                scaleX: 2,
+                scaleY: 2
+            },
+            {
+                path: "2005/Dock10/shapes/14.svg",
+                layerOrder: 0,
+                positionX: 100,
+                positionY: 500,
+                scaleX: 2,
+                scaleY: 2
+            },
+            {
+                path: "2005/Dock10/shapes/16.svg",
+                layerOrder: 0,
+                positionX: 0,
+                positionY: 0,
+                scaleX: 2,
+                scaleY: 2
+            },
+            {
+                path: "2005/Dock10/shapes/18.svg",
+                layerOrder: 0,
+                positionX: 0,
+                positionY: 0,
+                scaleX: 2,
+                scaleY: 2
+            },
+            {
+                path: "2005/Dock10/shapes/19.svg",
+                layerOrder: 0,
+                positionX: 0,
+                positionY: 0,
+                scaleX: 2,
+                scaleY: 2
+            },
+            {
+                path: "2005/Dock10/shapes/21.svg",
+                layerOrder: 0,
+                positionX: 0,
+                positionY: 0,
+                scaleX: 2,
+                scaleY: 2
+            },
+            {
+                path: "2005/Dock10/shapes/25.svg",
+                layerOrder: 0,
+                positionX: 0,
+                positionY: 0,
+                scaleX: 2,
+                scaleY: 2
+            }
+        ],
+        doors:
+        [
+            {
+                transformMatrix: "1.0, 0.0, 0.0, 1.0, 9.55, -13.25",
+                pathD: "M121.45 13.25 L121.45 150.25 57.45 150.25 -9.55 13.25 121.45 13.25",
+                passRoomID: 1,
+                positionX: 1206,
+                positionY: 242,
+                scale: 2,
+                spawnPosX: 429,
+                spawnPosY: 653,
+            },
+        ]
     },
     {
         roomID: 320,
@@ -465,3 +598,8 @@ const rooms =
         addedDate: "July 11, 2013"
     }
 ];
+
+const penguinSprites = 
+[
+
+]

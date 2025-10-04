@@ -11,8 +11,8 @@ const context = canvas.getContext("2d");
 //I'll have a player template json then populated it as they play, it'll be save every so often as cookies and they can down load/upload they're files cause it won't persist except cookies.
 
 var mouse = {x: 0, y: 0}
+var clicked = false;
 var mouseClick = {x: 0, y: 0}
-var currentRoom = 2;
 
 const dockTownPath = "M131 0 L131 137 67 137 0 0 131 0"
 const dockTown = new Path2D(dockTownPath);
@@ -53,16 +53,20 @@ async function fetchData()
 }
 console.log(svgData);*/
 
-
 class Room
 {
-    constructor(_roomID)
+    constructor()
     {
-        this.roomID = _roomID;
-        this.roomsIndex = _roomID;
+        this.roomID = 0;
+        this.roomsIndex = 0;
         this.images = [];
-         this.imagesPositions = [];
+        this.imagesPositions = [];
         this.imagesScales = [];
+
+        this.drawDoors = true;
+        this.doors = [];
+        this.passRoomIDs = [];
+        this.doorSpawns = [];
     }
     LoadRoom(_roomID)
     {
@@ -75,7 +79,10 @@ class Room
             }
         }
 
-        console.log(rooms[this.roomsIndex].images);
+        //console.log(rooms[this.roomsIndex].images);
+        this.images.length = 0;
+        this.imagesPositions.length = 0;
+        this.imagesScales.length = 0;
         for(var i = 0; i < rooms[this.roomsIndex].images.length; i++)
         {
             const image = new Image();
@@ -83,8 +90,41 @@ class Room
             this.images.push(image);
             this.imagesPositions.push({x: rooms[this.roomsIndex].images[i].positionX, y: rooms[this.roomsIndex].images[i].positionY});
             this.imagesScales.push({x: rooms[this.roomsIndex].images[i].scaleX, y: rooms[this.roomsIndex].images[i].scaleY});
-
         }
+
+        
+        this.doors.length = 0;
+        this.passRoomIDs.length = 0;
+        this.doorSpawns.length = 0;
+        if( rooms[this.roomsIndex].doors != null)
+        {
+            for(var i = 0; i < rooms[this.roomsIndex].doors.length; i++)
+            {
+                const rawPath = new Path2D(rooms[this.roomsIndex].doors[i].pathD);
+                const tMValues = rooms[this.roomsIndex].doors[i].transformMatrix.split(",");
+
+                const transMatrix = new DOMMatrix();
+                var tempPath = new Path2D();
+                var finalPath = new Path2D();
+                
+                transMatrix.a = tMValues[0];
+                transMatrix.b = tMValues[1];
+                transMatrix.c = tMValues[2];
+                transMatrix.d = tMValues[3];
+                transMatrix.e = tMValues[4];
+                transMatrix.f = tMValues[5];
+                tempPath.addPath(rawPath, transMatrix);
+
+                const tanScaleMatrix = new DOMMatrix();
+                tanScaleMatrix.translateSelf(rooms[this.roomsIndex].doors[i].positionX, rooms[this.roomsIndex].doors[i].positionY);
+                tanScaleMatrix.scaleSelf(rooms[this.roomsIndex].doors[i].scale)
+                finalPath.addPath(tempPath, tanScaleMatrix);
+                this.doors.push(finalPath);
+                this.passRoomIDs.push(rooms[this.roomsIndex].doors[i].passRoomID);
+                this.doorSpawns.push({x: rooms[this.roomsIndex].doors[i].spawnPosX, y: rooms[this.roomsIndex].doors[i].spawnPosY});
+            }
+        }
+        
     }
     DrawRoom()
     {
@@ -92,6 +132,16 @@ class Room
         {
             //console.log(this.imagesPositions[0].x + " " + this.imagesPositions[0].y);
             context.drawImage(this.images[i], this.imagesPositions[i].x, this.imagesPositions[i].y, this.images[i].width * this.imagesScales[i].x, this.images[i].height * this.imagesScales[i].y);
+        }
+        if(this.drawDoors)
+        {
+            for(var i = 0; i < this.doors.length; i++)
+            {
+                context.globalAlpha = 0.5;
+                context.fillStyle = "red";
+                context.fill(this.doors[i]);
+                context.globalAlpha = 1;
+            }
         }
     }
 }
@@ -110,6 +160,7 @@ class Penguin
         this.walkFrame = 0;
         this.walkCounter = 0;
         this.walkRate = 3;
+        this.cancelMovement = false;
 
         const ring = new Image();
         ring.src = "2005/penguin/shapes/2.svg";
@@ -405,25 +456,40 @@ class Penguin
 
             }
 
-            var clickOpposite = this.penguinPos.x - _clickPos.x;
-            var clickAdjacent = this.penguinPos.y - _clickPos.y;
-            var clickHypotenuse = Math.sqrt(Math.pow(clickOpposite, 2) + Math.pow(clickAdjacent, 2))
-            var clickOppositeNormalized = clickOpposite/clickHypotenuse;
-            var clickAdjacentNormalized = clickAdjacent/clickHypotenuse;
-
-            //a^2 + b^2 = c^2
-
-            if (this.penguinPos.x >= _clickPos.x + this.speed || this.penguinPos.x <= _clickPos.x - this.speed)
+            if(clicked)
             {
-                //console.log("y: " + this.penguinPos.x + ", " + _clickPos.x + " x: " + this.penguinPos.y + ", " + _clickPos.y);
-                this.penguinPos.x -= clickOppositeNormalized * this.speed;
-                this.penguinPos.y -= clickAdjacentNormalized * this.speed;
+                this.cancelMovement = false;
+                console.log(_clickPos);
+                var clickOpposite = this.penguinPos.x - _clickPos.x;
+                var clickAdjacent = this.penguinPos.y - _clickPos.y;
+                var clickHypotenuse = (Math.sqrt(Math.pow(clickOpposite, 2) + Math.pow(clickAdjacent, 2)) / this.speed)
+                clickOppositeNormalized = clickOpposite/clickHypotenuse;
+                clickAdjacentNormalized = clickAdjacent/clickHypotenuse;
+                clicked = false;
+            }
+
+            var checkOpposite = this.penguinPos.x - _clickPos.x;
+            var checkAdjacent = this.penguinPos.y - _clickPos.y;
+            var checkHypotenuse = (Math.sqrt(Math.pow(checkOpposite, 2) + Math.pow(checkAdjacent, 2)) / this.speed);
+
+            if (checkHypotenuse > 1 && _clickPos.x != 0 && !this.cancelMovement)
+            {
+                this.penguinPos.x -= clickOppositeNormalized;
+                this.penguinPos.y -= clickAdjacentNormalized;
+            }
+            else
+            {
+                if( _clickPos.x != 0 && !this.cancelMovement)
+                {
+                    this.penguinPos = _clickPos;
+                }
             }
 
             var ringXCenter = this.ring.width / 2 * haloSale;
             var ringYCenter = this.ring.height / 2 * haloSale;
             var bodyXCenter = this.body.width / 2  * bodyscale;
             var bodyYCenter = this.body.height / 2  * bodyscale;
+
             var bellyXCenter = this.belly.width / 2  * bodyscale;
             var bellyXToRingX = ringXCenter - bellyXCenter;
             var BodyXToRingX = ringXCenter - bodyXCenter;
@@ -481,16 +547,22 @@ class Penguin
             context.fillRect(_clickPos.x, _clickPos.y, 1, 1);
         }
     }
+    SetPosition(_penguinPos)
+    {
+        this.penguinPos = _penguinPos;
+    }
     GetPosition()
     {
         return this.penguinPos;
     }
 }
 
-var CurrentRoom = new Room(1);
+var CurrentRoom = new Room();
 penguin = new Penguin(1);
 CurrentRoom.LoadRoom(1);
 
+var clickOppositeNormalized;
+var clickAdjacentNormalized;
 
 // Animation Loop
 function animate() 
@@ -506,7 +578,18 @@ function animate()
 
     CurrentRoom.DrawRoom();
 
-    if (currentRoom == 1 && penguin.GetPosition().x < 280)
+    for(var i = 0; i < CurrentRoom.doors.length; i++)
+    {
+        if(context.isPointInPath(CurrentRoom.doors[i], penguin.GetPosition().x, penguin.GetPosition().y))
+        {
+            penguin.cancelMovement = true;
+            console.log(CurrentRoom.doorSpawns[i]);
+            penguin.SetPosition(CurrentRoom.doorSpawns[i]);
+            CurrentRoom.LoadRoom(CurrentRoom.passRoomIDs[i]);
+        }
+    }
+
+    /*if (currentRoom == 1 && penguin.GetPosition().x < 280)
     {
         currentRoom = 2;
     }
@@ -516,7 +599,7 @@ function animate()
     }
     else
     {
-    }
+    }*/
 
     context.globalAlpha = 0.5;
     context.fillStyle = "blue";
@@ -539,7 +622,7 @@ function MousePos(event)
 canvas.addEventListener("click", MouseClickPos);
 function MouseClickPos(event)
 {
+    clicked = true;
     mouseClick.x = (event.pageX - canvas.offsetLeft);
     mouseClick.y = (event.pageY - canvas.offsetTop);
-    //console.log(mouseClick);
 }
