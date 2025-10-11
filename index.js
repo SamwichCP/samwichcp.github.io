@@ -3,6 +3,8 @@ const button = document.querySelector("button");
 const canvas = document.querySelector("canvas");
 const context = canvas.getContext("2d");
 
+//https://www.youtube.com/watch?v=54BmDU2IRwc
+
 //Have a svg path2d that checks, if you're on this side of the world sprite render the sprite on top otherwise the penguin renders on top
 //This.images[]
 //This.path2d[]
@@ -10,17 +12,11 @@ const context = canvas.getContext("2d");
 //Have the RoomData inside a js cause it doesn't need to change during game but player data like cloths bought/wearing, coins will be a json, also igloo data will be in a diffrent json.
 //I'll have a player template json then populated it as they play, it'll be save every so often as cookies and they can down load/upload they're files cause it won't persist except cookies.
 
+var date = "August 22, 2005";
+
 var mouse = {x: 0, y: 0}
 var clicked = false;
 var mouseClick = {x: 0, y: 0}
-
-const dockTownPath = "M131 0 L131 137 67 137 0 0 131 0"
-const dockTown = new Path2D(dockTownPath);
-var dockTownMatrixed = new Path2D();
-const dTmatrix = new DOMMatrix();
-dTmatrix.translateSelf(1207, 245);
-dTmatrix.scaleSelf(2)
-dockTownMatrixed.addPath(dockTown, dTmatrix);
 
 //they don't have it listed but they have the beta swf in their archive zip file 
 //C:\Users\WestSadow67\Documents\SandwichCP-Project\Working with SWF files\All the Archives of CP\archivesclubpenguinwikiinfo-20241005-wikidump\images\B files\Beta-town.swf
@@ -59,6 +55,9 @@ class Room
     {
         this.roomID = 0;
         this.roomsIndex = 0;
+        this.roomSpawn = {x: 0, y:0};
+        this.hasMusic = false;
+        this.roomMusic;
         this.images = [];
         this.imagesPositions = [];
         this.imagesScales = [];
@@ -67,6 +66,9 @@ class Room
         this.doors = [];
         this.passRoomIDs = [];
         this.doorSpawns = [];
+
+        this.drawboundary = false;
+        this.boundary;
     }
     LoadRoom(_roomID)
     {
@@ -77,6 +79,13 @@ class Room
             {
                 this.roomsIndex = i;
             }
+        }
+        this.roomSpawn = {x: rooms[this.roomsIndex].spawnPosX, y: rooms[this.roomsIndex].spawnPosY};
+
+        this.hasMusic = rooms[this.roomsIndex].hasMusic;
+        if (this.hasMusic)
+        {
+            this.roomMusic = new Audio(rooms[this.roomsIndex].musicPath);
         }
 
         //console.log(rooms[this.roomsIndex].images);
@@ -121,10 +130,34 @@ class Room
                 finalPath.addPath(tempPath, tanScaleMatrix);
                 this.doors.push(finalPath);
                 this.passRoomIDs.push(rooms[this.roomsIndex].doors[i].passRoomID);
-                this.doorSpawns.push({x: rooms[this.roomsIndex].doors[i].spawnPosX, y: rooms[this.roomsIndex].doors[i].spawnPosY});
+                this.doorSpawns.push({x: rooms[this.roomsIndex].doors[i].setPosX, y: rooms[this.roomsIndex].doors[i].setPosY});
             }
         }
-        
+
+        this.boundary = null;
+        if( rooms[this.roomsIndex].boundary != null)
+        {
+            const rawPath = new Path2D(rooms[this.roomsIndex].boundary.pathD);
+            const tMValues = rooms[this.roomsIndex].boundary.transformMatrix.split(",");
+
+            const transMatrix = new DOMMatrix();
+            var tempPath = new Path2D();
+            var finalPath = new Path2D();
+            
+            transMatrix.a = tMValues[0];
+            transMatrix.b = tMValues[1];
+            transMatrix.c = tMValues[2];
+            transMatrix.d = tMValues[3];
+            transMatrix.e = tMValues[4];
+            transMatrix.f = tMValues[5];
+            tempPath.addPath(rawPath, transMatrix);
+
+            const tanScaleMatrix = new DOMMatrix();
+            tanScaleMatrix.translateSelf(rooms[this.roomsIndex].boundary.positionX, rooms[this.roomsIndex].boundary.positionY);
+            tanScaleMatrix.scaleSelf(rooms[this.roomsIndex].boundary.scale)
+            finalPath.addPath(tempPath, tanScaleMatrix);
+            this.boundary = finalPath;
+        }
     }
     DrawRoom()
     {
@@ -138,10 +171,17 @@ class Room
             for(var i = 0; i < this.doors.length; i++)
             {
                 context.globalAlpha = 0.5;
-                context.fillStyle = "red";
+                context.fillStyle = "blue";
                 context.fill(this.doors[i]);
                 context.globalAlpha = 1;
             }
+        }
+        if(this.drawboundary && this.boundary)
+        {
+            context.globalAlpha = 0.5;
+            context.fillStyle = "red";
+            context.fill(this.boundary);
+            context.globalAlpha = 1;
         }
     }
 }
@@ -153,7 +193,7 @@ class Penguin
         this.haloPos = {x: 388, y: 68};
         this.speed = 10;
         this.drawScale = _drawScale;
-        this.penguinPos = {x: canvas.width/2, y: canvas.height/2};
+        this.penguinPos = {x: 0, y: 0};
         this.action = 0;
 
         this.First;
@@ -161,6 +201,7 @@ class Penguin
         this.walkCounter = 0;
         this.walkRate = 3;
         this.cancelMovement = false;
+        this.checkNextStep = {x: 0, y: 0};
 
         const ring = new Image();
         ring.src = "2005/penguin/shapes/2.svg";
@@ -178,22 +219,8 @@ class Penguin
         EyesFeets.src = "2005/penguin/shapes/10.svg";
         EyesFeets.onload = () => { this.EyesFeets = EyesFeets; }
     }
-    draw({_clickPos, _mousePos})
+    draw({_clickPos, _mousePos}, _boundary)
     {
-        const dockNonWalkPath = "M570.5 89.5 Q380.8 68.85 262.5 74.5 106.7 149.05 136.5 184.5 157.95 192.5 153.5 200.5 147.7 208.5 119.5 216.5 126.1 226.1 96.5 228.5 48.25 216.95 0.0 228.4 L0.0 0.0 760.0 0.0 760.0 344.5 731.5 344.5 728.95 340.95 Q725.55 336.75 721.65 333.1 712.85 324.95 701.4 321.0 689.55 316.9 677.1 317.25 L676.55 309.6 Q673.8 274.5 665.6 240.5 L702.5 240.5 702.5 145.5 601.95 121.35 Q587.7 105.45 570.5 89.5 M33.5 265.5 Q51.0 291.4 100.0 298.0 15.35 349.75 79.5 401.5 L179.5 427.5 267.5 329.5 281.5 329.5 265.5 372.5 Q261.15 400.2 317.5 416.5 349.55 428.4 393.5 416.5 421.5 444.7 460.5 443.5 497.05 443.85 526.5 419.5 572.0 431.8 617.5 419.5 684.55 374.3 759.5 368.5 L760.0 368.5 760.0 480.0 0.0 480.0 0.0 249.5 Q44.5 248.25 33.5 265.5";
-        const nonWalk = new Path2D(dockNonWalkPath);
-        var nonWalkScaled = new Path2D();
-        const matrix2 = new DOMMatrix();
-        matrix2.scaleSelf(2)
-        nonWalkScaled.addPath(nonWalk, matrix2);
-
-        context.globalAlpha = 0.5;
-        context.fillStyle = "red";
-        //context.fill(nonWalkScaled);
-        context.globalAlpha = 1;
-        //check a few pixels in front of the moving penguin so it stops put the penguin pos stays inside the walkable area
-        //console.log(context.isPointInPath(nonWalkScaled, this.penguinPos.x, this.penguinPos.y) + " " + _clickPos)
-
         if(this.body)
         {
             document.body.style.cursor = "pointer";
@@ -472,6 +499,17 @@ class Penguin
             var checkAdjacent = this.penguinPos.y - _clickPos.y;
             var checkHypotenuse = (Math.sqrt(Math.pow(checkOpposite, 2) + Math.pow(checkAdjacent, 2)) / this.speed);
 
+            //check a few pixels in front of the moving penguin so it stops put the penguin pos stays inside the walkable area
+            this.checkNextStep.x = this.penguinPos.x - clickOppositeNormalized;
+            this.checkNextStep.y = this.penguinPos.y - clickAdjacentNormalized;
+            if(_boundary)
+            {
+                if(context.isPointInPath(_boundary, this.checkNextStep.x, this.checkNextStep.y))
+                {
+                    this.cancelMovement = true;
+                }
+            }
+
             if (checkHypotenuse > 1 && _clickPos.x != 0 && !this.cancelMovement)
             {
                 this.penguinPos.x -= clickOppositeNormalized;
@@ -558,8 +596,15 @@ class Penguin
 }
 
 var CurrentRoom = new Room();
+CurrentRoom.LoadRoom(100);
+if(CurrentRoom.hasMusic)
+{
+    CurrentRoom.roomMusic.play();
+    CurrentRoom.roomMusic.loop = true;
+}
+
 penguin = new Penguin(1);
-CurrentRoom.LoadRoom(1);
+penguin.SetPosition(CurrentRoom.roomSpawn);
 
 var clickOppositeNormalized;
 var clickAdjacentNormalized;
@@ -567,16 +612,13 @@ var clickAdjacentNormalized;
 // Animation Loop
 function animate() 
 {
-    //console.log(dataP.innerHTML);
-
     context.clearRect(0, 0, canvas.width, canvas.height);
-
     context.imageSmoothingEnabled = false;
 
     //need a draw order array so I can change if something is behind or infront of the player
 
-
     CurrentRoom.DrawRoom();
+    penguin.draw({_clickPos: {x: mouseClick.x, y: mouseClick.y}, _mousePos: {x: mouse.x, y: mouse.y}}, CurrentRoom.boundary);
 
     for(var i = 0; i < CurrentRoom.doors.length; i++)
     {
@@ -586,28 +628,15 @@ function animate()
             console.log(CurrentRoom.doorSpawns[i]);
             penguin.SetPosition(CurrentRoom.doorSpawns[i]);
             CurrentRoom.LoadRoom(CurrentRoom.passRoomIDs[i]);
+            CurrentRoom.roomMusic.pause();
+            CurrentRoom.roomMusic.currentTime = 0;
+            if(CurrentRoom.hasMusic)
+            {
+                CurrentRoom.roomMusic.play();
+                CurrentRoom.roomMusic.loop = true;
+            }
         }
     }
-
-    /*if (currentRoom == 1 && penguin.GetPosition().x < 280)
-    {
-        currentRoom = 2;
-    }
-    else if (currentRoom == 2 && context.isPointInPath(dockTownMatrixed, penguin.GetPosition().x, penguin.GetPosition().y))
-    {
-        currentRoom = 1;
-    }
-    else
-    {
-    }*/
-
-    context.globalAlpha = 0.5;
-    context.fillStyle = "blue";
-    //context.fill(dockTownMatrixed);
-    context.globalAlpha = 1;
-
-    penguin.draw({_clickPos: {x: mouseClick.x, y: mouseClick.y}, _mousePos: {x: mouse.x, y: mouse.y}});
-
     requestAnimationFrame(animate);
 }
 animate();
