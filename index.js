@@ -60,7 +60,7 @@ class Room
         this.roomsIndex = 0;
         this.roomSpawn = {x: 0, y:0};
         this.hasMusic = false;
-        this.roomMusic;
+        this.roomMusic = new Audio();
         this.images = [];
         this.imagesPositions = [];
         this.imagesScales = [];
