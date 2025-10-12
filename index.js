@@ -12,6 +12,9 @@ const context = canvas.getContext("2d");
 //Have the RoomData inside a js cause it doesn't need to change during game but player data like cloths bought/wearing, coins will be a json, also igloo data will be in a diffrent json.
 //I'll have a player template json then populated it as they play, it'll be save every so often as cookies and they can down load/upload they're files cause it won't persist except cookies.
 
+// date = "August 22, 2005" = daysSinceStart = 0001 = dayIndex
+// date = "March 29, 2017" = daysSinceStart = 4237 = dayIndex
+
 var date = "August 22, 2005";
 
 var mouse = {x: 0, y: 0}
@@ -605,9 +608,40 @@ if(CurrentRoom.hasMusic)
 
 penguin = new Penguin(1);
 penguin.SetPosition(CurrentRoom.roomSpawn);
-
 var clickOppositeNormalized;
 var clickAdjacentNormalized;
+
+var insideWorld = false;
+
+function get0Date (_month, _year) {
+    return new Date(_year, _month, 0);
+}
+var year = 2005;
+var month = 8;
+var monthName = get0Date(month,year).toLocaleString('en-US', { month: 'long' });
+var daysInMonth = get0Date(month,year).getDate();
+// Function to check whether a point is inside a rectangle
+function isInside(_pos, _rect) {
+  return _pos.x > _rect.x && _pos.x < _rect.x + _rect.width && _pos.y < _rect.y + _rect.height && _pos.y > _rect.y
+}
+var rect1 = {
+  x: 100,
+  y: 100,
+  width: 200,
+  height: 100,
+};
+var rect2 = {
+  x: 1100,
+  y: 100,
+  width: 200,
+  height: 100,
+};
+var rect3 = {
+  x: 700,
+  y: 710,
+  width: 300,
+  height: 100,
+};
 
 // Animation Loop
 function animate() 
@@ -615,28 +649,118 @@ function animate()
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.imageSmoothingEnabled = false;
 
-    //need a draw order array so I can change if something is behind or infront of the player
-
-    CurrentRoom.DrawRoom();
-    penguin.draw({_clickPos: {x: mouseClick.x, y: mouseClick.y}, _mousePos: {x: mouse.x, y: mouse.y}}, CurrentRoom.boundary);
-
-    for(var i = 0; i < CurrentRoom.doors.length; i++)
+    if(insideWorld)
     {
-        if(context.isPointInPath(CurrentRoom.doors[i], penguin.GetPosition().x, penguin.GetPosition().y))
+        CurrentRoom.DrawRoom();
+        penguin.draw({_clickPos: {x: mouseClick.x, y: mouseClick.y}, _mousePos: {x: mouse.x, y: mouse.y}}, CurrentRoom.boundary);
+        //need a draw order array so I can change if something is behind or infront of the player
+        for(var i = 0; i < CurrentRoom.doors.length; i++)
         {
-            penguin.cancelMovement = true;
-            console.log(CurrentRoom.doorSpawns[i]);
-            penguin.SetPosition(CurrentRoom.doorSpawns[i]);
-            CurrentRoom.LoadRoom(CurrentRoom.passRoomIDs[i]);
-            CurrentRoom.roomMusic.pause();
-            CurrentRoom.roomMusic.currentTime = 0;
-            if(CurrentRoom.hasMusic)
+            if(context.isPointInPath(CurrentRoom.doors[i], penguin.GetPosition().x, penguin.GetPosition().y))
             {
-                CurrentRoom.roomMusic.play();
-                CurrentRoom.roomMusic.loop = true;
+                penguin.cancelMovement = true;
+                console.log(CurrentRoom.doorSpawns[i]);
+                penguin.SetPosition(CurrentRoom.doorSpawns[i]);
+                CurrentRoom.LoadRoom(CurrentRoom.passRoomIDs[i]);
+                CurrentRoom.roomMusic.pause();
+                CurrentRoom.roomMusic.currentTime = 0;
+                if(CurrentRoom.hasMusic)
+                {
+                    CurrentRoom.roomMusic.play();
+                    CurrentRoom.roomMusic.loop = true;
+                }
             }
         }
     }
+    else
+    {
+        context.font = "100px sans-serif";
+        context.fillStyle = 'black';
+
+        // Draw filled text
+        context.fillText(monthName, 300, 200);
+        context.fillText(year, 800, 200);
+        context.beginPath();
+        context.rect(rect1.x, rect1.y, rect1.width, rect1.height);
+        context.rect(rect2.x, rect2.y, rect2.width, rect2.height);
+        context.fillStyle = 'white';
+        context.fill();
+        context.beginPath();
+        context.font = "60px sans-serif";
+        context.rect(rect3.x, rect3.y, rect3.width, rect3.height);
+        context.fillStyle = 'blue';
+        context.fill();
+        context.fillStyle = 'white';
+        context.fillText("Enter Date", rect3.x, rect3.y + 100);
+        
+
+        if (isInside(mouseClick,rect2) && clicked)
+        {
+            clicked = false
+            month++;
+            if(month % 13 == 0)
+            {
+                month = 1;
+                year++;
+            }
+            monthName = get0Date(month,year).toLocaleString('en-US', { month: 'long' });
+            daysInMonth = get0Date(month,year).getDate();
+        }
+
+        if (isInside(mouseClick,rect1) && clicked)
+        {
+            clicked = false
+            month--;
+            if(month % 13 == 0)
+            {
+                month = 12;
+                year--;
+            }
+            monthName = get0Date(month,year).toLocaleString('en-US', { month: 'long' });
+            daysInMonth = get0Date(month,year).getDate();
+        }
+        
+        var x = 0;
+        var y = 0;
+        for(var i = 0; i < daysInMonth; i++)
+        {
+            if (i % 7 == 0)
+            {
+                y++;
+                x = 0;
+            }
+            context.beginPath();
+            context.rect(300 + (100 * x), 200 + (100 * y), 100, 100);
+            context.fillStyle = 'white';
+            context.fill();
+            context.strokeStyle = 'black';
+            context.lineWidth = 3;
+            context.stroke();
+            x++;
+        }
+
+        var x = 0;
+        var y = 0;
+        for(var i = 0; i < daysInMonth; i++)
+        {
+            if (i % 7 == 0)
+            {
+                y++;
+                x = 0;
+            }
+            context.font = "50px sans-serif";
+            context.fillStyle = 'black';
+            context.fillText(i + 1, 300 + (100 * x), 300 + (100 * y));
+            x++;
+        }
+
+        if (isInside(mouseClick,rect3) && clicked)
+        {
+            clicked = false
+            insideWorld = true;
+        }
+    }
+    
     requestAnimationFrame(animate);
 }
 animate();

@@ -3,7 +3,6 @@
 -Have all the draw images in an array with a top to bottom value so I can render everything like the old club penguin would do I can pop new penguins in and swap the array indexes for the sort order
 -add date information to everything I can from the cpwiki archives/cpwiki into the js file with the room image load.
 -find out how fast the penguin moves from one spot to another from old videos to get the movement speed.
--Do circle math to get the look direction and movement angle
 
 https://developer.mozilla.org/en-US/play?uuid=4757810d-591c-4d10-acd0-5f6fcf9f38ba&state=lVRNj9MwEP0rQ06pVFK4bpsiWIq0EiDE54FwsJLZxMi1I9vpbrXa%2F86M7SYtFHY5eeJ58%2BbNs527rPNblV1kq%2B75%2Bo1UCB9RNGhXC%2Fqu9ErqfvDg9z2WVXZN%2BSoD2aT4acjSzoKhjdzF1BadEy0h16sFbXKut3hUVhvtUfsAoAwBsnlWO0cyKPjJK0GcB0ZfBQUlNKYetlRVtOg3Cjl8tb9q8lMps2Wlp9rL2Oi1dL0S%2B4dJRmETTRrmMRTj3Fxd6VF8IZpmsyPcW%2BmIHi1h605ohs6BgkYhW%2F8JFdZeGp3qBx2%2BziFyZL4Z3FUaYJqX5IVE4YUleQXvue%2FPfiwZ9qchhcdbn7aotMqqbAmLBVwqFBboZHbSDC4yH6wholNLHkmSihxPBpz%2FKpRshMdIj7fBmxqBhg33jWHyGvInnE%2BTArjO3LyLVOTiexOrXfAFmwI%2BUFdHajtjaBEhXbDNVYbWGhsPh5ks%2BsHq8HEfRY3dCu5fODLRu2%2FSd9SJh6Tav%2Bj4ot3Q98aShCgoEBzERHUkhkn%2BSxHZxM8RfBdtmk7bhldKfmu8Ab4a8dnmkStmC6OVoeoS8hmU64P0B%2B9BqrboBuWjnFPWoPt32lNHNgHCFVK3o%2F7REm%2F3IFoh9TknTrrx8tJ9JoF5uAiUC%2BaQNUm9I2fT7QJvQq%2FBoT16QMfSEnIejigd5z8vdEouzwCd39NMtVHBDSaEsiynceAFxRYbii4oai2iptcRJqAfHSndIv3rlGw7n93%2FAg%3D%3D&srcPrefix=%2Fen-US%2Fdocs%2FWeb%2FAPI%2FFileReader%2F
 -Using the SVG Data like the green change room zones and the greyed out no walking area, don't draw them but check for collisions or if the penguin in inside the zone to execute scripts like change rooms or cancel movement.
@@ -13,3 +12,27 @@ https://www.youtube.com/watch?v=M4OiT0Au0z4
 
 -When you click it'll mesurrer out all the penguin points along the path it'll move to every frame and the click will be the last point that'll be shorter than the movement distance per frame
 look at C:\Users\WestSadow67\Documents\SandwichCP-Project\stepDistanceMath.png for better understanding
+
+-export all the needed data from the swf files into needed formats and add refrences to the paths in the RoomData
+
+do order
+-add calendar navigation
+-add newspaper
+-add UI
+
+-add commands for outside game controls
+-add bots for multiplayer minigames
+-add emoticons
+-add rooms
+-add music
+-add minigames
+-add clothing 3D
+-add clothing paper
+-add catalogs
+-add mail
+-add puffles
+-add penguin 3D
+-add penguin paper
+-add player igloo
+-add map
+-add parties

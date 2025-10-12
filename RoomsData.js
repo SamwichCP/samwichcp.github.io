@@ -932,4 +932,4 @@ const rooms =
 const penguinSprites = 
 [
 
-]
+];
