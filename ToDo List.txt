@@ -1,3 +1,7 @@
+-if the player only saves 1 penguin to computer use cookies
+-if the player only saves 2 penguin to computer use local storage
+-if the player only saves 3 penguin to computer use indexeddb
+
 -Have a empty xml file that you can download and upload or copy and paste over the charter items, useranames, stamps, money, and other stuff.
 -When logging in you can either create a penguin with just a username or you can import the stuff then you choose the month date year looks like the DeLorean or very simple arrows to flip through the stuff.
 -Have all the draw images in an array with a top to bottom value so I can render everything like the old club penguin would do I can pop new penguins in and swap the array indexes for the sort order

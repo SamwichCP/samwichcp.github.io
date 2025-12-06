@@ -12,8 +12,10 @@ const context = canvas.getContext("2d");
 //Have the RoomData inside a js cause it doesn't need to change during game but player data like cloths bought/wearing, coins will be a json, also igloo data will be in a diffrent json.
 //I'll have a player template json then populated it as they play, it'll be save every so often as cookies and they can down load/upload they're files cause it won't persist except cookies.
 
-// date = "August 22, 2005" = daysSinceStart = 0001 = dayIndex
+// date = "August 22, 2005" = daysSinceStart = 0000 = dayIndex
 // date = "March 29, 2017" = daysSinceStart = 4237 = dayIndex
+
+const startDate = new Date(2005, 7, 22)
 
 var date = "August 22, 2005";
 
@@ -51,6 +53,237 @@ async function fetchData()
     }
 }
 console.log(svgData);*/
+
+class Calendar
+{
+    constructor()
+    {
+        this.thisDate = new Date(2000, 3, 1);
+        this.daySinceStart = 0;
+    }
+    DrawCalendar()
+    {
+        var dayRect = 
+        {
+            x: 100,
+            y: 100,
+            width: 100,
+            height: 100,
+        };
+
+        context.font = "100px sans-serif";
+        context.fillStyle = 'black';
+
+        // Draw filled text
+        context.fillText(monthName, 300, 200);
+        context.fillText(year, 800, 200);
+        context.beginPath();
+        context.rect(rect1.x, rect1.y, rect1.width, rect1.height);
+        context.rect(rect2.x, rect2.y, rect2.width, rect2.height);
+        context.fillStyle = 'white';
+        context.fill();
+        context.beginPath();
+        context.font = "60px sans-serif";
+        context.rect(rect3.x, rect3.y, rect3.width, rect3.height);
+        context.fillStyle = 'blue';
+        context.fill();
+        context.fillStyle = 'white';
+        context.fillText("Enter Date", rect3.x, rect3.y + 100);
+
+        if (isInside(mouseClick,rect2) && clicked)
+        {
+            clicked = false
+            month++;
+            if(month % 13 == 0)
+            {
+                month = 1;
+                year++;
+            }
+            monthName = get0Date(month,year).toLocaleString('en-US', { month: 'long' });
+            daysInMonth = get0Date(month,year).getDate();
+        }
+
+        if (isInside(mouseClick,rect1) && clicked)
+        {
+            clicked = false
+            month--;
+            if(month % 13 == 0)
+            {
+                month = 12;
+                year--;
+            }
+            monthName = get0Date(month,year).toLocaleString('en-US', { month: 'long' });
+            daysInMonth = get0Date(month,year).getDate();
+        }
+
+        var x = 0;
+        var y = 0;
+        for(var i = 1; i <= daysInMonth; i++)
+        {
+            if (x % 7 == 0)
+            {
+                y++;
+                x = 0;
+            }
+            var dayRectMoved =
+            {
+                x: 300 + (dayRect.x * x),
+                y: 200 + (dayRect.y * y),
+                width: dayRect.width,
+                height: dayRect.height,
+            }  
+            if (isInside(mouseClick, dayRectMoved) && clicked)
+            {
+                this.thisDate = new Date(year, month - 1, i);
+                this.daySinceStart = GetDaysBetweenDates(startDate,this.thisDate);
+                worldDate = this.daySinceStart;
+                console.log(worldDate);
+                clicked = false;
+            }
+            x++;
+        }
+        
+        var x = 0;
+        var y = 0;
+        for(var i = 1; i <= daysInMonth; i++)
+        {
+            if (x % 7 == 0)
+            {
+                y++;
+                x = 0;
+            }
+            context.beginPath();
+            context.rect(300 + (100 * x), 200 + (100 * y), 100, 100);
+            if(i == this.clickedDayIndex)
+            {
+                context.fillStyle = 'rgba(60, 255, 0, 0.26)';
+            }
+            else
+            {
+                context.fillStyle = 'white';
+            }
+            
+            context.fill();
+            context.strokeStyle = 'black';
+            context.lineWidth = 3;
+            context.stroke();
+            x++;
+        }
+
+        var x = 0;
+        var y = 0;
+        for(var i = 1; i <= daysInMonth; i++)
+        {
+            if (x % 7 == 0)
+            {
+                y++;
+                x = 0;
+            }
+            context.font = "50px sans-serif";
+            context.fillStyle = 'black';
+            context.fillText(i, 300 + (100 * x), 300 + (100 * y));
+            x++;
+        }
+
+        if (isInside(mouseClick,rect3) && clicked)
+        {
+            clicked = false;
+            insideWorld = true;
+        }
+    }
+}
+
+class UI
+{
+    constructor()
+    {
+        this.images = [];
+        this.imagesPositions = [];
+        this.imagesScales = [];
+    }
+    LoadUI()
+    {
+        this.images.length = 0;
+        this.imagesPositions.length = 0;
+        this.imagesScales.length = 0;
+        for(var i = 0; i < UIObjects[0].images.length; i++)
+        {
+            const image = new Image();
+            image.src = UIObjects[0].images[i].path;
+            this.images.push(image);
+            this.imagesPositions.push({x: UIObjects[0].images[i].positionX, y: UIObjects[0].images[i].positionY});
+            this.imagesScales.push({x: UIObjects[0].images[i].scaleX, y: UIObjects[0].images[i].scaleY});
+        }
+    }
+    DrawUI(_hovered)
+    {
+        if(_hovered)
+        {
+            context.drawImage(this.images[2], this.imagesPositions[2].x, this.imagesPositions[2].y, this.images[2].width * this.imagesScales[2].x, this.images[2].height * this.imagesScales[2].y);
+        }
+        else
+        {
+            context.drawImage(this.images[0], this.imagesPositions[0].x, this.imagesPositions[0].y, this.images[0].width * this.imagesScales[0].x, this.images[0].height * this.imagesScales[0].y);
+        }
+        context.drawImage(this.images[1], this.imagesPositions[1].x, this.imagesPositions[1].y, this.images[1].width * this.imagesScales[1].x, this.images[1].height * this.imagesScales[1].y);
+        context.drawImage(this.images[3], this.imagesPositions[3].x, this.imagesPositions[3].y, this.images[3].width * this.imagesScales[3].x, this.images[3].height * this.imagesScales[3].y);
+    }
+}
+
+class NewsPaper
+{
+    constructor()
+    {
+        this.gotIssue = false;
+        this.worldDate = 0;
+        this.issueIndex = -1;
+        this.issue = 0;
+        this.images = [];
+        this.imagesPositions = [];
+        this.imagesScales = [];
+    }
+    LoadNewsPaper(_worldDate)
+    {
+        this.gotIssue = false;
+        this.worldDate = _worldDate;
+
+        this.images.length = 0;
+        this.imagesPositions.length = 0;
+        this.imagesScales.length = 0;
+
+        for(var i = 0; i < ThePenguinTimes.length; i++)
+        {
+            if(this.worldDate <= ThePenguinTimes[i].lastDateNumber && this.worldDate >= ThePenguinTimes[i].addedDateNumber)
+            {
+                this.gotIssue = true;
+                this.issueIndex = i;
+                this.issue = ThePenguinTimes[i].issueNumber;
+            }
+        }
+        if(this.gotIssue)
+        {
+            for(var i = 0; i < ThePenguinTimes[this.issueIndex].images.length; i++)
+            {
+                const image = new Image();
+                image.src = ThePenguinTimes[this.issueIndex].images[i].path;
+                this.images.push(image);
+                this.imagesPositions.push({x: ThePenguinTimes[this.issueIndex].images[i].positionX, y: ThePenguinTimes[this.issueIndex].images[i].positionY});
+                this.imagesScales.push({x: ThePenguinTimes[this.issueIndex].images[i].scaleX, y: ThePenguinTimes[this.issueIndex].images[i].scaleY});
+            }
+        }
+        
+    }
+    DrawNewsPaper()
+    {
+        if(this.gotIssue)
+        {
+            for(var i = 0; i < this.images.length; i++)
+            {
+                context.drawImage(this.images[i], this.imagesPositions[i].x, this.imagesPositions[i].y, this.images[i].width * this.imagesScales[i].x, this.images[i].height * this.imagesScales[i].y);
+            }
+        }
+    }
+}
 
 class Room
 {
@@ -598,6 +831,12 @@ class Penguin
     }
 }
 
+var calendar = new Calendar();
+
+var userInterface = new UI();
+userInterface.LoadUI();
+var newsPaper = new NewsPaper();
+
 var CurrentRoom = new Room();
 CurrentRoom.LoadRoom(100);
 if(CurrentRoom.hasMusic)
@@ -611,7 +850,19 @@ penguin.SetPosition(CurrentRoom.roomSpawn);
 var clickOppositeNormalized;
 var clickAdjacentNormalized;
 
+var worldDate = 0;
 var insideWorld = false;
+
+function GetDaysBetweenDates(_startDate, _endDate) {
+  var time1 = _startDate.getTime();
+  var time2 = _endDate.getTime();
+
+  var differenceInMilliseconds = time2 - time1;
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+
+  var daysBetween = differenceInMilliseconds / millisecondsPerDay;
+  return Math.round(daysBetween); // Round to the nearest whole day
+}
 
 function get0Date (_month, _year) {
     return new Date(_year, _month, 0);
@@ -643,6 +894,16 @@ var rect3 = {
   height: 100,
 };
 
+var hovering = false;
+var NewsRect = {
+  x: userInterface.imagesPositions[0].x,
+  y: userInterface.imagesPositions[0].y,
+  width: userInterface.imagesPositions[0].x + (userInterface.imagesPositions[0].x * userInterface.imagesScales[0].x),
+  height: userInterface.imagesPositions[0].y + (userInterface.imagesPositions[0].y * userInterface.imagesScales[0].y),
+};
+
+var DrawNews = false;
+
 // Animation Loop
 function animate() 
 {
@@ -651,13 +912,34 @@ function animate()
 
     if(insideWorld)
     {
+        newsPaper.LoadNewsPaper(worldDate);
         CurrentRoom.DrawRoom();
+
+        if(isInside(mouse, NewsRect))
+        {
+            hovering = true;
+        }
+        else
+        {
+            hovering = false;
+        }
+        userInterface.DrawUI(hovering);
+        console.log(hovering + " + " + clicked);
+        if(hovering && clicked)
+        {
+            DrawNews = true;
+        }
         penguin.draw({_clickPos: {x: mouseClick.x, y: mouseClick.y}, _mousePos: {x: mouse.x, y: mouse.y}}, CurrentRoom.boundary);
+        if(DrawNews)
+        {
+            newsPaper.DrawNewsPaper();
+        }
         //need a draw order array so I can change if something is behind or infront of the player
         for(var i = 0; i < CurrentRoom.doors.length; i++)
         {
             if(context.isPointInPath(CurrentRoom.doors[i], penguin.GetPosition().x, penguin.GetPosition().y))
             {
+                console.log(worldDate);
                 penguin.cancelMovement = true;
                 console.log(CurrentRoom.doorSpawns[i]);
                 penguin.SetPosition(CurrentRoom.doorSpawns[i]);
@@ -674,91 +956,7 @@ function animate()
     }
     else
     {
-        context.font = "100px sans-serif";
-        context.fillStyle = 'black';
-
-        // Draw filled text
-        context.fillText(monthName, 300, 200);
-        context.fillText(year, 800, 200);
-        context.beginPath();
-        context.rect(rect1.x, rect1.y, rect1.width, rect1.height);
-        context.rect(rect2.x, rect2.y, rect2.width, rect2.height);
-        context.fillStyle = 'white';
-        context.fill();
-        context.beginPath();
-        context.font = "60px sans-serif";
-        context.rect(rect3.x, rect3.y, rect3.width, rect3.height);
-        context.fillStyle = 'blue';
-        context.fill();
-        context.fillStyle = 'white';
-        context.fillText("Enter Date", rect3.x, rect3.y + 100);
-        
-
-        if (isInside(mouseClick,rect2) && clicked)
-        {
-            clicked = false
-            month++;
-            if(month % 13 == 0)
-            {
-                month = 1;
-                year++;
-            }
-            monthName = get0Date(month,year).toLocaleString('en-US', { month: 'long' });
-            daysInMonth = get0Date(month,year).getDate();
-        }
-
-        if (isInside(mouseClick,rect1) && clicked)
-        {
-            clicked = false
-            month--;
-            if(month % 13 == 0)
-            {
-                month = 12;
-                year--;
-            }
-            monthName = get0Date(month,year).toLocaleString('en-US', { month: 'long' });
-            daysInMonth = get0Date(month,year).getDate();
-        }
-        
-        var x = 0;
-        var y = 0;
-        for(var i = 0; i < daysInMonth; i++)
-        {
-            if (i % 7 == 0)
-            {
-                y++;
-                x = 0;
-            }
-            context.beginPath();
-            context.rect(300 + (100 * x), 200 + (100 * y), 100, 100);
-            context.fillStyle = 'white';
-            context.fill();
-            context.strokeStyle = 'black';
-            context.lineWidth = 3;
-            context.stroke();
-            x++;
-        }
-
-        var x = 0;
-        var y = 0;
-        for(var i = 0; i < daysInMonth; i++)
-        {
-            if (i % 7 == 0)
-            {
-                y++;
-                x = 0;
-            }
-            context.font = "50px sans-serif";
-            context.fillStyle = 'black';
-            context.fillText(i + 1, 300 + (100 * x), 300 + (100 * y));
-            x++;
-        }
-
-        if (isInside(mouseClick,rect3) && clicked)
-        {
-            clicked = false
-            insideWorld = true;
-        }
+        calendar.DrawCalendar();
     }
     
     requestAnimationFrame(animate);
